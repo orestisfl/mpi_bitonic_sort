@@ -61,7 +61,7 @@ int main(int argc , char** argv)
   // The master process checks that the correct number of processes
   // has started working.
 
-  if (  numTasks != p )
+  if (  numTasks != ( 1 << p) )
   {
     printf("The number of tasks is not equal to the one passed to "
     "the master process and thus the sorting procedure will stop! \n");

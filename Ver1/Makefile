@@ -1,5 +1,5 @@
 TARGET = bitonic
-NPROC = 4
+NPROC=$(shell echo 2\^$(p) | bc)
 
 all:
 	mpicc -O3 $(TARGET).c -o $(TARGET)

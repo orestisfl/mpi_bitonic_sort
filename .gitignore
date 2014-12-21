@@ -2,7 +2,9 @@
 *.o
 *.obj
 
-
+*.swn
+*.swp
+*.swo
 
 # Libraries
 *.lib

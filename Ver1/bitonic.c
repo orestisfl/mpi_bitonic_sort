@@ -73,10 +73,6 @@ int main(int argc , char** argv)
     return -1;
   }
   
-  
-  
-
-  
   // Calculate the total number of elements.
   N = 1 << q ;   
 
@@ -99,7 +95,7 @@ int main(int argc , char** argv)
   
   printf("Process %d has started generating the dataset! \n",processID);
 
-  srand(time(NULL));  
+  srand(time(NULL) * (processID + 1));  
   for ( i = 0 ; i < N ; i++ )
   {
     array[i] = rand() % N  ;

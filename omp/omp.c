@@ -26,6 +26,11 @@ void recBitonicSort(int lo, int cnt, int dir);
 void impBitonicSort(void);
 void parallelImpBitonicSort(void);
 
+int ascendingSort (const void * a, const void * b)
+{
+    return ( *(int*)a - *(int*)b );
+}
+
 /** the main program **/
 int main(int argc, char **argv)
 {
@@ -39,6 +44,20 @@ int main(int argc, char **argv)
     N = 1 << atoi(argv[1]);
     a = (int *) malloc(N * sizeof(int));
 
+    init();
+
+    gettimeofday (&startwtime, NULL);
+    qsort( a , N , sizeof(int) , ascendingSort ); 
+    gettimeofday (&endwtime, NULL);
+
+    seq_time = (double)((endwtime.tv_usec - startwtime.tv_usec) / 1.0e6
+                        + endwtime.tv_sec - startwtime.tv_sec);
+
+    printf("\n Quicksort  wall clock time = %f\n", seq_time);
+
+    test();
+
+    // Imperative Bitonic Sort 
     init();
 
     gettimeofday (&startwtime, NULL);

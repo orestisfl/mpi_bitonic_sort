@@ -18,11 +18,27 @@ enum {
 // the corresponding process by the calling one and perform
 // void mergeHigh(int *localArray,int N, );
 // void mergeLow();
+
 void print_array(int *a, int N)
 {
     for (int i = 0; i < N; ++i) printf("%d ", a[i]);
     printf("\n");
 }
+
+void print_all_arrays(int *array, int N, int processID, int numTasks)
+{
+    int runs = 0;
+    while (runs < numTasks) {
+        if (processID == runs) {
+            printf ("Array printed by rank: %d\n", processID);
+            print_array(array, N);
+            fflush (stdout);
+        }
+        runs ++;
+        MPI_Barrier (MPI_COMM_WORLD);
+    }
+}
+
 
 
 /* Function passed to the std lib quicksort in order to sort
@@ -121,17 +137,7 @@ int main(int argc , char** argv)
     // Wait for all the tasks to generate the data set.
     MPI_Barrier(MPI_COMM_WORLD);
 
-    //test arrays
-    int runs = 0;
-    while (runs < numTasks) {
-        if (processID == runs) {
-            printf ("Array printed by rank: %d\n", processID);
-            print_array(array, N);
-            fflush (stdout);
-        }
-        runs ++;
-        MPI_Barrier (MPI_COMM_WORLD);
-    }
+    print_all_arrays(array, N, processID, numTasks);
 
 
     // Wait for all processes to finish sorting. (MPI_BARRIER)

@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-void merge(int *a, int *b, size_t N)
+/* Function that merges arrays a , b into one by keeping only their N
+ * smallest values
+*/
+void mergeLow(int *a, int *b, size_t N)
 {
     /* a: result array
      * b: 2nd array for the merging

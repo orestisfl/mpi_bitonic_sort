@@ -25,7 +25,9 @@ void icantor(int z, int res[2])
 }
 
 
-
+/* Function that is called by a process in order to exchange data
+ * with its partner and keep the smallest elements
+*/
 void CompareLow(int *local_array, size_t N, int partner)
 {
 
@@ -39,9 +41,13 @@ void CompareLow(int *local_array, size_t N, int partner)
 
     int send_tag = 2 * cantor(rank, partner);
     int recv_tag = cantor(rank, partner);
-
-    MPI_Isend(local_array   , N, MPI_INT, partner, send_tag, MPI_COMM_WORLD, &reqs[0]);
-    MPI_Irecv(received_array, N, MPI_INT, partner, recv_tag, MPI_COMM_WORLD, &reqs[0]);
+    
+    // Send our array to our partner.
+    MPI_Isend(local_array   , N, MPI_INT, partner, send_tag, MPI_COMM_WORLD, 
+        &reqs[0]);
+    // Get our partner's array .
+    MPI_Irecv(received_array, N, MPI_INT, partner, recv_tag, MPI_COMM_WORLD, 
+        &reqs[1]);
 
     /* we shouldn't modify the local_array
      * until our partner receives it, so we wait */
@@ -50,7 +56,10 @@ void CompareLow(int *local_array, size_t N, int partner)
     /* merging the two sorted arrays
      * we have 2N elements and we need N,
      * so there is no way to have leftovers*/
-    merge(local_array, received_array, N);
+    mergeLow(local_array, received_array, N);
 }
 
+/* Function that is called by a process in order to exchange data
+ * with its partner and keep the largest elements.
+*/
 void CompareHigh(int *local_array, size_t N, int partner);

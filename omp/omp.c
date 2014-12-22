@@ -24,7 +24,7 @@ void compare(int i, int j, int dir);
 void bitonicMerge(int lo, int cnt, int dir);
 void recBitonicSort(int lo, int cnt, int dir);
 void impBitonicSort(void);
-
+void parallelImpBitonicSort(void);
 
 /** the main program **/
 int main(int argc, char **argv)
@@ -51,6 +51,20 @@ int main(int argc, char **argv)
     printf("\nImperative wall clock time = %f\n", seq_time);
 
     test();
+    // Parallel Imperative Bitonic Sort.
+    init();
+
+    gettimeofday (&startwtime, NULL);
+    parallelImpBitonicSort();
+    gettimeofday (&endwtime, NULL);
+
+    seq_time = (double)((endwtime.tv_usec - startwtime.tv_usec) / 1.0e6
+                        + endwtime.tv_sec - startwtime.tv_sec);
+
+    printf("\nParallel Imperative wall clock time = %f\n", seq_time);
+
+    test();
+
 
     init();
     gettimeofday (&startwtime, NULL);
@@ -178,11 +192,36 @@ void sort()
 }
 
 
+/*
+ * Imperative Version of Bitonic Sort.
+ */
+
+void impBitonicSort()
+{
+
+    int i, j, k;
+    int ij;
+
+    for (k = 2; k <= N; k = 2 * k) {
+        for (j = k >> 1; j > 0; j = j >> 1) {       
+            for (i = 0; i < N; i++) {
+                ij = i ^ j;
+                if (ij > i) {
+                    if ((i & k) == 0 && a[i] > a[ij])
+                        exchange(i, ij);
+                    if ((i & k) != 0 && a[i] < a[ij])
+                        exchange(i, ij);
+                }
+
+            }
+        }
+    }
+}
 
 /*
-  imperative version of bitonic sort
+  Parallel imperative version of bitonic sort
 */
-void impBitonicSort()
+void parallelImpBitonicSort()
 {
 
     int i, j, k;

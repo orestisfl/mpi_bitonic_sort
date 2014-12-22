@@ -74,7 +74,6 @@ int main(int argc , char** argv)
 
     /*Calculate the total number of elements.
      * and create the dataset */
-
     N = 1 << q ;
 
     printf("Process %d has started generating the dataset! \n", processID);
@@ -111,10 +110,7 @@ int main(int argc , char** argv)
 #endif
 
     free(array);
-    // Terminate the MPI environment.
     MPI_Finalize();
-
-
     return 0;
 
 }

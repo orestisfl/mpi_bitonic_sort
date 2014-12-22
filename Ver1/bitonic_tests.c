@@ -155,81 +155,56 @@ int iterativeLowMerge(int *merged , int *a ,int *b ,int N )
 }
 
 
-/* Function used to test if a sequence contained in array
- * a was successfully sorted.
-*/
-int sortingTest(int *a ,int N)
-{
-  int pass = 1;
-  int i;
-  for (i = 1; i < N ; i++) {
-    pass &= (a[i - 1] <= a[i] ) ;
-  }
 
-  printf("sorted TEST %s\n", (pass) ? "PASSed" : "FAILED" );
-  return pass ;
-}
 
 void merge(int *a, int *b, size_t N)
 {
   /* a: result array
-   * b: 2nd array for the merging
-   * i: index of array a
-   * j: index of array b */
+   *      * b: 2nd array for the merging
+   *           * i: index of array a
+   *                * j: index of array b */
   int j = 0;
-  int beh = 0;
-  int cases[8] = {0};
+  int behind = 0;
 
   for(int i = 0; i < N; ++i) {
-    if (beh < 0) printf("WARNING beh<0\n");
-    if (beh) {
+    if (behind) {
       /* the smaller elements of are on the behind */
       if (b[j] <= a[N - 1]) {
-        cases[0] = 1;
-        /* b[j] is still smaller than beh elements */
-        if(N - beh > i) {
-          cases[1] = 1;
-          beh++;
-          a[N - beh] = a[i];
+        /* b[j] is still smaller than behind elements */
+        if(N - behind > i) {
+          behind++;
+          a[N - behind] = a[i];
         } else {
-          cases[2] = 1;
-          /* start replacing beh elements
-           * because we've reached the back_fits (i) */
-          beh--;
+          /* start replacing behind elements
+           *                      * because we've reached the back_fits (i) */
+          behind--;
         }
         a[i] = b[j++];
       } else {
-        cases[3] = 1;
-        /* beh element smaller than b[j]. put it in a[i]*/
+        /* behind element smaller than b[j]. put it in a[i]*/
         int repl = a[N - 1];
-        int back_fits = N - beh > i;
-
-        if(back_fits) a[N - beh] = a[i];
-        if(back_fits) cases[4] = 1;
+        int back_fits = N - behind > i;
 
         /* and swift the rest elements. */
-        memmove(&a[N - beh + 1], &a[N - beh], (beh - 1) * sizeof(int));
+        memmove(&a[N - behind + 1], &a[N - behind], (behind - 1) * sizeof(int));
+        if(back_fits) a[N - behind] = a[i];
         a[i] = repl;
-        if (!back_fits) beh--;
-        if (!back_fits) cases[5] = 1;
+        if (!back_fits) behind--;
       }
 
     } else {
       if (b[j] < a[i]) {
-        cases[6] = 1;
-        if(N - beh > i) {
-          cases[7] = 1;
-          beh++;
-          a[N - beh] = a[i];
+        if(N - behind > i) {
+          behind++;
+          a[N - behind] = a[i];
         } else {
-          cases[8] = 1;
-          /* start replacing beh elements
-           * because we've reached the back_fits (i) */
-          beh--;
+          /* start replacing behind elements
+           *                      * because we've reached the back_fits (i) */
+          behind--;
         }
         a[i] = b[j++];
       }
     }
   }
+
 }
-    

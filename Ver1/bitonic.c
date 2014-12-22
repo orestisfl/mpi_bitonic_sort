@@ -18,6 +18,30 @@ enum {
 // void mergeHigh(int *localArray,int N, );
 // void mergeLow();
 
+
+/* Function passed to the std lib quicksort in order to sort
+ * an array in ascending order. 
+*/
+
+int Ascending(const void *a, const void *b)
+{
+  if ( *(int*)a <  *(int*)b ) return -1;
+  if ( *(int*)a == *(int*)b ) return 0;
+  if ( *(int*)a >  *(int*)b ) return 1;
+}
+
+/* Function passed to the std lib quicksort in order to sort
+ * an array in Descending order. 
+*/
+
+int Descending(const void *a, const void *b)
+{
+  if ( *(int*)a <  *(int*)b ) return 1;
+  if ( *(int*)a == *(int*)b ) return 0;
+  if ( *(int*)a >  *(int*)b ) return -1;
+  
+}
+
 int main(int argc , char** argv)
 {
     // ID of the process.
@@ -90,7 +114,10 @@ int main(int argc , char** argv)
     for ( i = 0 ; i < N ; i++ ) {
         array[i] = rand() % N  ;
     }
-
+    
+    // Sort all the elements in ascending order.
+    qsort( array , N , int , Ascending );
+    
     // Wait for all the tasks to generate the data set.
     MPI_Barrier(MPI_COMM_WORLD);
 

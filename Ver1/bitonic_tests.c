@@ -130,6 +130,10 @@ int iterativeHighMerge(int *merged , int *a ,int *b ,int N )
       j++;
     }
   }
+
+  free(a);
+  free(b);
+  free(merged);
   // The merge was succesfull.
   return 1;
 }

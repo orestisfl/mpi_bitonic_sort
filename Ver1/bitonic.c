@@ -51,9 +51,7 @@ int main(int argc , char** argv)
     // The number of elements in the local data array.
     int N;
     int numTasks;
-
     int i, j ;
-
     int p , q ;
 
     // Check if enough arguments were passed to each process.

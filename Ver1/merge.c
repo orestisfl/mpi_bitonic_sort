@@ -112,8 +112,9 @@ int cmpfunc (const void * a, const void * b)
 }
 
 
-int main()
+int main(int argc , char* argv[] )
 {
+    
     int a[SIZE], b[SIZE];
     init(a, b);
     qsort(a, SIZE, sizeof(int), cmpfunc);

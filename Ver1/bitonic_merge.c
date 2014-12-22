@@ -4,6 +4,9 @@
 #include <math.h>
 #include <time.h>
 
+
+
+
 int cantor(int a, int b)
 {
     /*pairing function

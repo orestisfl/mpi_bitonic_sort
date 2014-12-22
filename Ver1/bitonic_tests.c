@@ -55,13 +55,16 @@ int mergeTest()
     return 0;
   }
 
+// ---------------------------------------------------------
+// ---------- Merge Low Tests ------------------------------
 
   int flag = iterativeLowMerge(merged , a , b , SIZE ) ;
   if ( flag < 0 )
     return 0;
-  printf("Finished Iterative Merge \n");
-  merge( a , b , SIZE ) ;
+  printf("Finished Iterative Merge Low \n");
+  merge( a , b , SIZE , 1 ) ;
   
+
   int pass = 1 ;
   for ( i = 0 ; i < SIZE ; i++ )
   {
@@ -70,6 +73,25 @@ int mergeTest()
       printf(" Correct Value = %d Actual Value = %d \n",merged[i] , a[i] );
   }
   
+  printf("Merge Low test %s \n", pass ? "PASSed" : "FAILED");
+
+// ---------------------------------------------------------
+// ---------- Merge High Tests ----------------------------- 
+
+  printf("Generating Data Set for merge high test \n");
+
+  for ( i = 0 ; i < SIZE ; i++ )
+    a[i] = i ;
+
+  flag = iterativeHighMerge(merged , a , b , SIZE );
+
+  if ( flag < 0 ) 
+    return 0;
+
+  printf("Finished iterative Merge \n");
+  
+  merge( a , b , SIZE , -1 ) ;
+
 
   return pass;
 }

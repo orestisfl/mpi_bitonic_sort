@@ -39,12 +39,9 @@ void print_all_arrays(int *array, int N, int processID, int numTasks)
     }
 }
 
-
-
 /* Function passed to the std lib quicksort in order to sort
  * an array in ascending order.
 */
-
 int Ascending(const void *a, const void *b)
 {
     return ( *(int*)a - * (int*)b );
@@ -53,7 +50,6 @@ int Ascending(const void *a, const void *b)
 /* Function passed to the std lib quicksort in order to sort
  * an array in Descending order.
 */
-
 int Descending(const void *a, const void *b)
 {
     return ( *(int*)b -  * (int*)a);
@@ -85,7 +81,6 @@ int main(int argc , char** argv)
 
     // Initialize the MPI processes and pass the command line
     // arguments to every one of them.
-
     MPI_Init( &argc , &argv);
 
     // Get the number of tasks running
@@ -98,11 +93,8 @@ int main(int argc , char** argv)
     p = atoi( argv[1]);
     q = atoi( argv[2]);
 
-
-
     // The master process checks that the correct number of processes
     // has started working.
-
     if (processID == 0 && numTasks != ( 1 << p) ) {
         printf("The number of tasks is not equal to the one passed to "
                "the master process and thus the sorting procedure will stop! \n");
@@ -137,8 +129,9 @@ int main(int argc , char** argv)
     // Wait for all the tasks to generate the data set.
     MPI_Barrier(MPI_COMM_WORLD);
 
+#ifdef PRINT_ALL_ARRAYS
     print_all_arrays(array, N, processID, numTasks);
-
+#endif
 
     // Wait for all processes to finish sorting. (MPI_BARRIER)
 

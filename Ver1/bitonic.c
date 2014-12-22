@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #define SEED
 #define MASTER 0
@@ -17,29 +18,30 @@ enum {
 // the corresponding process by the calling one and perform
 // void mergeHigh(int *localArray,int N, );
 // void mergeLow();
+void print_array(int *a, int N)
+{
+    for (int i = 0; i < N; ++i) printf("%d ", a[i]);
+    printf("\n");
+}
 
 
 /* Function passed to the std lib quicksort in order to sort
- * an array in ascending order. 
+ * an array in ascending order.
 */
 
 int Ascending(const void *a, const void *b)
 {
-  if ( *(int*)a <  *(int*)b ) return -1;
-  if ( *(int*)a == *(int*)b ) return 0;
-  if ( *(int*)a >  *(int*)b ) return 1;
+    return ( *(int*)a - * (int*)b );
 }
 
 /* Function passed to the std lib quicksort in order to sort
- * an array in Descending order. 
+ * an array in Descending order.
 */
 
 int Descending(const void *a, const void *b)
 {
-  if ( *(int*)a <  *(int*)b ) return 1;
-  if ( *(int*)a == *(int*)b ) return 0;
-  if ( *(int*)a >  *(int*)b ) return -1;
-  
+    return ( *(int*)b -  * (int*)a);
+
 }
 
 int main(int argc , char** argv)
@@ -112,12 +114,24 @@ int main(int argc , char** argv)
     for ( i = 0 ; i < N ; i++ ) {
         array[i] = rand() % N  ;
     }
-    
+
     // Sort all the elements in ascending order.
-    qsort( array , N , int , Ascending );
-    
+    qsort( array , N , sizeof(int) , Ascending );
+
     // Wait for all the tasks to generate the data set.
     MPI_Barrier(MPI_COMM_WORLD);
+
+    //test arrays
+    int runs = 0;
+    while (runs < numTasks) {
+        if (processID == runs) {
+            printf ("Array printed by rank: %d\n", processID);
+            print_array(array, N);
+            fflush (stdout);
+        }
+        runs ++;
+        MPI_Barrier (MPI_COMM_WORLD);
+    }
 
 
     // Wait for all processes to finish sorting. (MPI_BARRIER)
@@ -139,3 +153,4 @@ int main(int argc , char** argv)
     return 0;
 
 }
+

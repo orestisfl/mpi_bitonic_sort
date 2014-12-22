@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     seq_time = (double)((endwtime.tv_usec - startwtime.tv_usec) / 1.0e6
                         + endwtime.tv_sec - startwtime.tv_sec);
 
-    printf("Imperative wall clock time = %f\n", seq_time);
+    printf("\nImperative wall clock time = %f\n", seq_time);
 
     test();
 
@@ -212,18 +212,19 @@ void impBitonicSort()
     int i, j, k;
 
     for (k = 2; k <= N; k = 2 * k) {
-        printf("\nk=%d\n", k);
+        printf("\nk=%d:\n", k);
         for (j = k >> 1; j > 0; j = j >> 1) {
-            printf("\tj=%d\n", j);
+            printf("\n\tj=%d:\n", j);
             for (i = 0; i < N; i++) {
                 int ij = i ^ j;
                 if (ij > i) {
+                    printf("\t\tcompare: a[%d]=%d <-> a[%d]=%d", i, a[i], ij, a[ij]);
                     if ((i & k) == 0 && a[i] > a[ij]) {
-                        printf("\t\texchange a[%d]=%d <-> a[%d]=%d", i, a[i], ij, a[ij]);
+                        //~ printf("\t\texchange a[%d]=%d <-> a[%d]=%d", i, a[i], ij, a[ij]);
                         exchange(i, ij);
                     }
                     if ((i & k) != 0 && a[i] < a[ij]) {
-                        printf("\t\texchange a[%d]=%d <-> a[%d]=%d", i, a[i], ij, a[ij]);
+                        //~ printf("\t\texchange a[%d]=%d <-> a[%d]=%d", i, a[i], ij, a[ij]);
                         exchange(i, ij);
                     }
                 }

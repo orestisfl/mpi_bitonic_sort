@@ -47,15 +47,6 @@ int Ascending(const void *a, const void *b)
     return ( *(int*)a - * (int*)b );
 }
 
-/* Function passed to the std lib quicksort in order to sort
- * an array in Descending order.
-*/
-int Descending(const void *a, const void *b)
-{
-    return ( *(int*)b -  * (int*)a);
-
-}
-
 int main(int argc , char** argv)
 {
     // ID of the process.

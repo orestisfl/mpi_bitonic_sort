@@ -18,3 +18,5 @@
 *.exe
 *.out
 *.hex
+
+*.fuse_hidden*

@@ -1,35 +1,8 @@
-/*
- bitonic.c
-
- This file contains two different implementations of the bitonic sort
-        recursive  version :  rec
-        imperative version :  impBitonicSort()
-
-
- The bitonic sort is also known as Batcher Sort.
- For a reference of the algorithm, see the article titled
- Sorting networks and their applications by K. E. Batcher in 1968
-
-
- The following codes take references to the codes avaiable at
-
- http://www.cag.lcs.mit.edu/streamit/results/bitonic/code/c/bitonic.c
-
- http://www.tools-of-computing.com/tc/CS/Sorts/bitonic_sort.htm
-
- http://www.iti.fh-flensburg.de/lang/algorithmen/sortieren/bitonic/bitonicen.htm
- */
-
-/*
-------- ----------------------
-   Nikos Pitsianis, Duke CS
------------------------------
-*/
-
-
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <math.h>
 
 struct timeval startwtime, endwtime;
 double seq_time;
@@ -101,9 +74,12 @@ void test()
 {
     int pass = 1;
     int i;
+    //~ printf("%d ", a[0]);
     for (i = 1; i < N; i++) {
+        //~ printf("%d ", a[i]);
         pass &= (a[i - 1] <= a[i]);
     }
+    //~ printf("\n");
 
     printf(" TEST %s\n", (pass) ? "PASSed" : "FAILed");
 }
@@ -115,7 +91,7 @@ void init()
     int i;
     for (i = 0; i < N; i++) {
         a[i] = rand() % N; // (N - i);
-        printf("%d ", a[i]);
+        //~ printf("%d ", a[i]);
     }
     printf("\n");
 }
@@ -210,29 +186,21 @@ void impBitonicSort()
 {
 
     int i, j, k;
+    int ij;
 
     for (k = 2; k <= N; k = 2 * k) {
-        printf("\nk=%d:\n", k);
         for (j = k >> 1; j > 0; j = j >> 1) {
-            printf("\n\tj=%d:\n", j);
-            int comparisons = 0;
+            #pragma omp parallel for private(ij)
             for (i = 0; i < N; i++) {
-                int ij = i ^ j;
+                ij = i ^ j;
                 if (ij > i) {
-                    comparisons++;
-                    printf("\t\tcompare: a[%d]=%d <-> a[%d]=%d", i, a[i], ij, a[ij]);
-                    if ((i & k) == 0 && a[i] > a[ij]) {
-                        //~ printf("\t\texchange a[%d]=%d <-> a[%d]=%d", i, a[i], ij, a[ij]);
+                    if ((i & k) == 0 && a[i] > a[ij])
                         exchange(i, ij);
-                    }
-                    if ((i & k) != 0 && a[i] < a[ij]) {
-                        //~ printf("\t\texchange a[%d]=%d <-> a[%d]=%d", i, a[i], ij, a[ij]);
+                    if ((i & k) != 0 && a[i] < a[ij])
                         exchange(i, ij);
-                    }
                 }
-                
+
             }
-            printf("\n Comparisons: %d", comparisons);
         }
     }
 }

@@ -209,10 +209,6 @@ int iterativeLowMerge(int *merged , int *a ,int *b ,int N )
 {
   // If the memory for the merged array was not allocated 
   // then allocate it.
-  if (merged == NULL )
-  {
-    merged = (int *) malloc ( N * sizeof(int) ) ;
-  }
   if ( merged == NULL )
   {
     printf("Error Allocating memory for array with the correct merge \n");

@@ -35,7 +35,6 @@ void compare(int **local_array, size_t N, int partner, int dir)
     int send_tag = (1 + (dir == ASCENDING ))  * cantor(cantor_arg1, cantor_arg2);
     int recv_tag = (1 + (dir == DESCENDING )) * cantor(cantor_arg1, cantor_arg2);
 
-    printf("rank=%d partner=%d send_tag=%d recv_tag=%d\n", rank, partner, send_tag, recv_tag);
 
     int *received_array = malloc(N * sizeof(int));
     if (dir == ASCENDING ) {

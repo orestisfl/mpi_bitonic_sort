@@ -6,4 +6,4 @@ all:
 test: utilities.h
 	gcc bitonic_tests.c general_functions.c merge.c -std=c99 -lm -o $(TARGET)_tests.out
 run:
-	mpiexec -n $(NPROC) ./$(TARGET).out $(p) $(q)
+	mpiexec.mpich2 -n $(NPROC) ./$(TARGET).out $(p) $(q)

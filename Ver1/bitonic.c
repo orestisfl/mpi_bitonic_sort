@@ -29,7 +29,8 @@ int main(int argc , char** argv)
     int numTasks;
     int i, j ;
     int p , q ;
-
+    double startTime;
+    double endTime ;
     // Check if enough arguments were passed to each process.
     if ( argc < 3) {
         // If not print a warning message with the correct way to use
@@ -70,7 +71,7 @@ int main(int argc , char** argv)
      * and create the dataset */
     N = 1 << q ;
 
-    printf("Process %d has started generating the dataset! \n", processID);
+    printf("\n Process %d has started generating the dataset! \n", processID);
     array = (int *)malloc( N * sizeof(int) );
 
     if ( array == NULL ) {
@@ -85,13 +86,18 @@ int main(int argc , char** argv)
         array[i] = rand() % N ;
     }
 
+    /* Get the starting time of the sorting Process */
+    if (processID == MASTER )
+      startTime = MPI_Wtime();
+    
     /* Sort the local data in ascending order */
-
+    
     qsort( array , N , sizeof(int) , ascendingOrder );
 
     // Wait for all the tasks to generate the data set.
     MPI_Barrier(MPI_COMM_WORLD);
-
+    
+   
     // Communicate with all corresponding processes.
    
     for (int i = 0 ; i < p ; i++) {
@@ -117,14 +123,19 @@ int main(int argc , char** argv)
 
     // Wait for all the processes to finish the exchanges.
     MPI_Barrier(MPI_COMM_WORLD);
+    
 
+    if (processID == MASTER ) 
+    {
+      endTime = MPI_Wtime(); 
+    }
     // If the test macro is enabled print that the sorting finished
     // successfully and perform verification tests.
     #ifdef TEST
 
     // Size of the receiving buffer used for testing.
     int final_size = N * numTasks;
-
+  
     // Pointer to the array of the received data from every process.
     int *final;
     // Only the master process needs to allocate memory.
@@ -158,7 +169,11 @@ int main(int argc , char** argv)
     }
 
     #endif
-   
+    
+    if ( processID == MASTER ) 
+      printf("\n  Total time of Parallel Bitonic Sort = %f \n", endTime -
+          startTime );
+
     free(array);
     MPI_Finalize();
     return 0;

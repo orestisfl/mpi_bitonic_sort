@@ -4,9 +4,6 @@
 #include <math.h>
 #include <time.h>
 
-
-
-
 int cantor(int a, int b)
 {
     /*pairing function
@@ -41,13 +38,13 @@ void CompareLow(int *local_array, size_t N, int partner)
 
     int send_tag = 2 * cantor(rank, partner);
     int recv_tag = cantor(rank, partner);
-    
+
     // Send our array to our partner.
-    MPI_Isend(local_array   , N, MPI_INT, partner, send_tag, MPI_COMM_WORLD, 
-        &reqs[0]);
+    MPI_Isend(local_array   , N, MPI_INT, partner, send_tag, MPI_COMM_WORLD,
+              &reqs[0]);
     // Get our partner's array .
-    MPI_Irecv(received_array, N, MPI_INT, partner, recv_tag, MPI_COMM_WORLD, 
-        &reqs[1]);
+    MPI_Irecv(received_array, N, MPI_INT, partner, recv_tag, MPI_COMM_WORLD,
+              &reqs[1]);
 
     /* we shouldn't modify the local_array
      * until our partner receives it, so we wait */
@@ -56,10 +53,40 @@ void CompareLow(int *local_array, size_t N, int partner)
     /* merging the two sorted arrays
      * we have 2N elements and we need N,
      * so there is no way to have leftovers*/
-    mergeLow(local_array, received_array, N);
+    merge(local_array, received_array, N, 1);
 }
 
 /* Function that is called by a process in order to exchange data
  * with its partner and keep the largest elements.
 */
-void CompareHigh(int *local_array, size_t N, int partner);
+void CompareHigh(int *local_array, size_t N, int partner)
+{
+
+    /* allocate space for new array, receive and send data*/
+    int *received_array = malloc(N * sizeof(int));
+
+    int rank;
+    MPI_Request reqs[2];
+    MPI_Status stats[2];
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    int send_tag = cantor(rank, partner);
+    int recv_tag = 2 * cantor(rank, partner);
+
+    // Get our partner's array .
+    MPI_Irecv(received_array, N, MPI_INT, partner, recv_tag, MPI_COMM_WORLD,
+              &reqs[1]);
+    // Send our array to our partner.
+    MPI_Isend(local_array   , N, MPI_INT, partner, send_tag, MPI_COMM_WORLD,
+              &reqs[0]);
+
+
+    /* we shouldn't modify the local_array
+     * until our partner receives it, so we wait */
+    MPI_Waitall(2, reqs, stats);
+
+    /* merging the two sorted arrays
+     * we have 2N elements and we need N,
+     * so there is no way to have leftovers*/
+    merge(local_array, received_array, N, -1);
+}

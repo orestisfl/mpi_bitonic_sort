@@ -75,7 +75,7 @@ int main(int argc , char** argv)
     MPI_Barrier(MPI_COMM_WORLD);
 
     // Communicate with all corresponding processes.
-    for (int i = 0 ; i < log2(p) ; i++)
+    for (int i = 0 ; i < p ; i++)
     {
       for (int  j = i ; j>=0 ; j-- )
       {

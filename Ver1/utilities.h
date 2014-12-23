@@ -17,6 +17,7 @@ enum {
 #define SIZE 100
 #define ASCENDING 1
 #define DESCENDING -1
+#define MASTER 0
 
 /* List of Function Prototypes */
 

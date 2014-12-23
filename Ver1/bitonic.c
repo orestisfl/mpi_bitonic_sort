@@ -69,7 +69,7 @@ int main(int argc , char** argv)
 
     /* Sort the local data in ascending order */
 
-    qsort( array , N , sizeof(int) , Ascending );
+    qsort( array , N , sizeof(int) , ascendingOrder );
 
     // Wait for all the tasks to generate the data set.
     MPI_Barrier(MPI_COMM_WORLD);
@@ -90,9 +90,9 @@ int main(int argc , char** argv)
              * elements , if not the larger ones.
             */
             if ( (( processID >> (i + 1)) & 1  ) == (  (processID >> j) & 1) )
-              compare(&array, N, partner, LOW);
+              compare(&array, N, partner, ASCENDING);
             else 
-              compare(&array, N, partner, HIGH);
+              compare(&array, N, partner, DESCENDING);
 
         }      
     } // End of for loop for communications.
@@ -129,7 +129,7 @@ int main(int argc , char** argv)
      *     other process in the sorting network.
     */
 
-    MPI_Gather(array, N, MPI_INT, final, N, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(array, N,MPI_INT , final, N, MPI_INT, 0, MPI_COMM_WORLD);
 
     if (processID == MASTER && final != NULL ) {
     

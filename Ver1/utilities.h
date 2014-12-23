@@ -6,6 +6,7 @@
 #include <math.h>
 #include <sys/time.h>
 
+
 enum {
       ARG_ERROR = 3,
       MALLOC_ERROR,
@@ -21,10 +22,9 @@ enum {
 
 /* List of Function Prototypes */
 
-/* Merge Functions */
-void* merge_low(int *a, int *b, size_t N);
-void* merge_high(int *a, int *b, size_t N);
-void merge(int **a, int *b, size_t N, int dir);
+//void* merge_low(int *a, int *b, size_t N);
+//void* merge_high(int *a, int *b, size_t N);
+//void merge(int **a, int *b, size_t N, int dir);
 
 /* Compare Function */
 
@@ -67,7 +67,7 @@ void print_all_arrays(int *array, int N, int processID, int numTasks)
 /* Function passed to stdlib qsort in order to sort the data in 
  * ascending order. 
 */
-int ascending( const void *a , const void *b)
+int ascendingOrder( const void *a , const void *b)
 {
     return ( (*(int*)a) - (*(int*)b) );
 }
@@ -88,7 +88,7 @@ int ascendingSort(int* array , int N )
   int pass = 1;
   int i;
   for (i = 1; i < N; i++) {
-    pass &= (a[i-1] <= a[i]);
+    pass &= (array[i-1] <= array[i]);
   }
 
   printf("Ascending sort TEST %s\n",(pass) ? "PASSed" : "FAILed");

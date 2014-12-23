@@ -1,4 +1,4 @@
-#include "utilities.h"
+#include "merge.h"
 
 int main()
 {
@@ -69,7 +69,7 @@ int mergeTest()
   if ( flag < 0 )
     return 0;
   printf("Finished Iterative Merge Low \n");
-  merge( a , b , SIZE , 1 ) ;
+  merge(&a , b , SIZE , 1 ) ;
   
   int pass = comparisonTest( merged , a , SIZE );
  
@@ -84,14 +84,14 @@ int mergeTest()
   for ( i = 0 ; i < SIZE ; i++ )
     a[i] = i ;
 
-  flag = iterativeHighMerge(merged , a , b , SIZE );
+  flag = iterativeHighMerge( merged , a , b , SIZE );
 
   if ( flag < 0 ) 
     return 0;
 
   printf("Finished iterative Merge \n");
   
-  merge( a , b , SIZE , -1 ) ;
+  merge( &a , b , SIZE , -1 ) ;
  
   pass = comparisonTest( merged , a , SIZE ); 
   printf("Merge High test 1 %s \n", pass ? "PASSed" : "FAILED");
@@ -110,7 +110,7 @@ int mergeTest()
 
   printf("Finished iterative Merge \n");
   
-  merge( a , b , SIZE , -1 ) ;
+  merge( &a , b , SIZE , -1 ) ;
  
   pass = comparisonTest( merged , a , SIZE ); 
   printf("Merge High test 2 %s \n", pass ? "PASSed" : "FAILED");
@@ -126,8 +126,8 @@ int mergeTest()
   }
 
   // Sort them for the merge to work.
-  qsort( a , SIZE , sizeof(int) , ascending );
-  qsort( b , SIZE , sizeof(int) , ascending );
+  qsort( a , SIZE , sizeof(int) , ascendingOrder );
+  qsort( b , SIZE , sizeof(int) , ascendingOrder );
 
   // Call the function that performs the correct merge.
   flag = iterativeHighMerge(merged , a , b , SIZE );
@@ -138,7 +138,7 @@ int mergeTest()
   printf("Finished iterative Merge \n");
   
   // Perform our merge.
-  merge( a , b , SIZE , -1 ) ;
+  merge( &a , b , SIZE , -1 ) ;
  
   pass = comparisonTest( merged , a , SIZE ); 
   printf("Merge High Random Number test %s \n", pass ? "PASSed" : "FAILED");

@@ -1,5 +1,5 @@
-#include "utilities.h"
-#include "mpi.h"
+#include "merge.h"
+
 
 /* Function that is called by a process in order to exchange data
  * keeps either smaller or larger elements of the 2 arrays */

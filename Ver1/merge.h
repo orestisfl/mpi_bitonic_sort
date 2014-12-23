@@ -1,8 +1,7 @@
-#include <stdlib.h>
-#include <string.h>
+#ifndef MERGE_H
+#define MERGE_H
 
-#define HIGH 1
-#define LOW -1
+#include "utilities.h"
 
 /* keeps the smaller elements of the 2 arrays.
  * returns result pointer of the sorted array */
@@ -41,14 +40,20 @@ void* merge_high(int *a, int *b, size_t N)
     return result;
 }
 
+/* Main merge function that calls either merge low or merge high
+ * depending on the value of the direction argument.
+*/
 void merge(int **a, int *b, size_t N, int dir)
 {
     /* result of the requested merge.  */
-    int *res = (dir == LOW) ? merge_low(*a, b, N) : merge_high(*a, b, N);
+    int *res = (dir == ASCENDING) ? merge_low(*a, b, N) : merge_high(*a, b, N);
     free(*a);
     *a = res;
 }
 
+/* Function that merges 2 arrays into one without using an extra
+ * memory buffer.
+*/
 void merge_2N(int *a, int *b, size_t N, int dir)
 {
     /* merge that only used O(1) (extra) space. Current implementation extremely slow. */
@@ -114,3 +119,5 @@ void merge_2N(int *a, int *b, size_t N, int dir)
         }
     }
 }
+
+#endif

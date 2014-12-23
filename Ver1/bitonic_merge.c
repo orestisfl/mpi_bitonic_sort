@@ -1,5 +1,25 @@
-#include "merge.h"
+#include "mpi.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "utilities.h"
+#include <math.h>
 
+int cantor(int a, int b)
+{
+    /*pairing function
+     *https://en.wikipedia.org/wiki/Pairing_function
+     *https://math.stackexchange.com/questions/23503/create-unique-number-from-2-numbers
+     * */
+    return (a + b) * (a + b + 1) / 2 + b;
+}
+
+void icantor(int z, int res[2])
+{
+    int w = (int)((sqrt(8 * z - 1)) / 2);
+    int t = (w * w + w) / 2;
+    res[0] = z - t;
+    res[1] = w - res[0];
+}
 
 /* Function that is called by a process in order to exchange data
  * keeps either smaller or larger elements of the 2 arrays */

@@ -1,7 +1,6 @@
-#ifndef MERGE_H
-#define MERGE_H
-
 #include "utilities.h"
+#include <stdlib.h>
+#include <string.h>
 
 /* keeps the smaller elements of the 2 arrays.
  * returns result pointer of the sorted array */
@@ -11,7 +10,7 @@ void* merge_low(int *a, int *b, size_t N)
     int j = 0;
 
     int *result = malloc(N * sizeof(int));
-    
+
     /* merging the two sorted arrays
     * we have 2N elements and we need N,
     * so there is no way to have leftovers*/
@@ -119,5 +118,3 @@ void merge_2N(int *a, int *b, size_t N, int dir)
         }
     }
 }
-
-#endif

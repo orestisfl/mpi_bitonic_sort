@@ -1,4 +1,22 @@
 #include "utilities.h"
+#include "mpi.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void print_all_arrays(int *array, int N, int processID, int numTasks)
+{
+    int runs = 0;
+    while (runs < numTasks) {
+        if (processID == runs) {
+            printf ("Array printed by rank: %d\n", processID);
+            print_array(array, N);
+            fflush (stdout);
+        }
+        runs ++;
+        MPI_Barrier (MPI_COMM_WORLD);
+    }
+}
 
 int main(int argc , char** argv)
 {

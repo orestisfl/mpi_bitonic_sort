@@ -97,18 +97,18 @@ int main(int argc , char** argv)
     
 
     // Wait for all processes to finish sorting. (MPI_BARRIER)
-
+    MPI_Barrier(MPI_COMM_WORLD);
 
     // If the test macro is enabled print that the sorting finished
     // successfully and perform verification tests.
-#ifdef TEST
+    #ifdef TEST
     if (processID == 0 ) {
         printf("The sorting procedure finished! \n");
-
+        
         // Call the test routines to see if the procedure was successful.
     }
 
-#endif
+    #endif
 
     free(array);
     MPI_Finalize();

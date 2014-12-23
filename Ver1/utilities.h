@@ -13,8 +13,6 @@ enum {
 } errors;
 
 
-
-
 // Array size for test purposes.
 #define SIZE 100
 #define ASCENDING 1
@@ -46,7 +44,9 @@ void print_array(int *a, int N)
 #ifdef MPICH
 #include "mpi.h"
 
-/* Print all the arrays */
+/* Print all the arrays of all the processes in ascending
+ * process rank order .
+*/
 void print_all_arrays(int *array, int N, int processID, int numTasks)
 {
   int runs = 0;
@@ -79,7 +79,21 @@ int iterativeLowMerge(int *merged , int *a ,int *b ,int N );
 int mergeTest();
 int comparisonTest( int * trueVal , int *valFound , int N );
 
+/* Function used to test that the given array was successfully 
+ * sorted in ascending order.
+*/
+int ascendingSort(int* array , int N )
+{
+  int pass = 1;
+  int i;
+  for (i = 1; i < N; i++) {
+    pass &= (a[i-1] <= a[i]);
+  }
 
+  printf("Ascending sort TEST %s\n",(pass) ? "PASSed" : "FAILed");
+
+  return pass;
+}
 
 #endif 
 

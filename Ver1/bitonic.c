@@ -120,9 +120,23 @@ int main(int argc , char** argv)
     // Wait for all the tasks to generate the data set.
     MPI_Barrier(MPI_COMM_WORLD);
 
-#ifdef PRINT_ALL_ARRAYS
+    // Communicate with all corresponding processes.
+    for (int i = 0 ; i < log2(p) ; i++)
+    {
+      for (int  j = i ; j>=0 ; j-- )
+      {
+        if ( (( processID >> (i+1)) & 1  ) == (  (processID>>j) & 1) )
+          // Compare Low 
+        else
+          // Compare High 
+      }
+
+    }
+
+    #ifdef PRINT_ALL_ARRAYS
     print_all_arrays(array, N, processID, numTasks);
-#endif
+    #endif
+    
 
     // Wait for all processes to finish sorting. (MPI_BARRIER)
 

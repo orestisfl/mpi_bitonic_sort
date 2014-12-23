@@ -1,6 +1,6 @@
 #include "mpi.h"
 #include <stdio.h>
-#include <stdlib.h>
+##include <stdlib.h>
 #include <math.h>
 #include <time.h>
 
@@ -125,6 +125,7 @@ int main(int argc , char** argv)
     {
       for (int  j = i ; j>=0 ; j-- )
       {
+        
         if ( (( processID >> (i+1)) & 1  ) == (  (processID>>j) & 1) )
           // Compare Low 
         else

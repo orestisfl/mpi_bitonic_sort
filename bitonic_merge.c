@@ -9,7 +9,7 @@
 //~ void print_array(int *a, int N);
 //~ void print_all_arrays(int *array, int N, int tid, int numTasks);
 
-
+void merge(int **a, int *b, size_t N, int dir);
 int cantor(int a, int b)
 {
     /*pairing function

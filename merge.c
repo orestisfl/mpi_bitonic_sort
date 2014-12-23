@@ -41,9 +41,6 @@ void* merge_high(int *a, int *b, size_t N)
     return result;
 }
 
-/* Main merge function that calls either merge low or merge high
- * depending on the value of the direction argument.
-*/
 void merge(int **a, int *b, size_t N, int dir)
 {
     /* result of the requested merge.  */
@@ -52,9 +49,6 @@ void merge(int **a, int *b, size_t N, int dir)
     *a = res;
 }
 
-/* Function that merges 2 arrays into one without using an extra
- * memory buffer.
-*/
 void merge_2N(int *a, int *b, size_t N, int dir)
 {
     /* merge that only used O(1) (extra) space. Current implementation extremely slow. */

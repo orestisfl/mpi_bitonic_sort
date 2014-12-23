@@ -22,13 +22,23 @@ int main(int argc , char** argv)
 {
     // ID of the process.
     int processID;
-
+    // The local array with the elements of every process.
     int *array;
     // The number of elements in the local data array.
     int N;
+    // The total number of tasks.
     int numTasks;
+    // Loop Indices.
     int i, j ;
+    /*
+     * p : 2^p is the total number of process to be used.
+     * q : 2^p is the total number of elements of every process.
+    */
     int p , q ;
+    
+    // Pointer to an array containing the initial data.
+    int *data;
+
     double startTime;
     double endTime ;
     // Check if enough arguments were passed to each process.
@@ -158,7 +168,7 @@ int main(int argc , char** argv)
      *     other process in the sorting network.
     */
 
-    MPI_Gather(array, N,MPI_INT , final, N, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(array, N,MPI_INT , final, N, MPI_INT, MASTER , MPI_COMM_WORLD);
 
     if (processID == MASTER && final != NULL ) {
     

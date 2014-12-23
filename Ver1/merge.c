@@ -1,8 +1,4 @@
-#include <stdlib.h>
-#include <string.h>
-
-#define HIGH 1
-#define LOW -1
+#include "utilities.h"
 
 /* keeps the smaller elements of the 2 arrays.
  * returns result pointer of the sorted array */

@@ -1,51 +1,5 @@
+#include "utilities.h"
 #include "mpi.h"
-#include <stdio.h>
-##include <stdlib.h>
-#include <math.h>
-#include <time.h>
-
-#define SEED
-#define MASTER 0
-
-enum {
-    ARG_ERROR = 3,
-    MALLOC_ERROR,
-    NTHREADS_ERROR
-} errors;
-
-
-// Function that is used by each process to communicate with
-// the corresponding process by the calling one and perform
-// void mergeHigh(int *localArray,int N, );
-// void mergeLow();
-
-void print_array(int *a, int N)
-{
-    for (int i = 0; i < N; ++i) printf("%d ", a[i]);
-    printf("\n");
-}
-
-void print_all_arrays(int *array, int N, int processID, int numTasks)
-{
-    int runs = 0;
-    while (runs < numTasks) {
-        if (processID == runs) {
-            printf ("Array printed by rank: %d\n", processID);
-            print_array(array, N);
-            fflush (stdout);
-        }
-        runs ++;
-        MPI_Barrier (MPI_COMM_WORLD);
-    }
-}
-
-/* Function passed to the std lib quicksort in order to sort
- * an array in ascending order.
-*/
-int Ascending(const void *a, const void *b)
-{
-    return ( *(int*)a - * (int*)b );
-}
 
 int main(int argc , char** argv)
 {
@@ -115,7 +69,7 @@ int main(int argc , char** argv)
     }
 
     // Sort all the elements in ascending order.
-    qsort( array , N , sizeof(int) , Ascending );
+    qsort( array , N , sizeof(int) , ascending );
 
     // Wait for all the tasks to generate the data set.
     MPI_Barrier(MPI_COMM_WORLD);
@@ -127,9 +81,12 @@ int main(int argc , char** argv)
       {
         
         if ( (( processID >> (i+1)) & 1  ) == (  (processID>>j) & 1) )
-          // Compare Low 
+        {  // Compare Low 
+        }
         else
+        {
           // Compare High 
+        }
       }
 
     }

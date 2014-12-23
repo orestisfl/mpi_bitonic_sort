@@ -1,18 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-
-#define SIZE 50 
-
-
-int iterativeHighMerge(int *merged , int *a ,int *b ,int N );
-int iterativeLowMerge(int *merged , int *a ,int *b ,int N );
-
-int mergeTest();
-
-int compare( const void *a , const void *b)
-{
-  return ( (*(int*)a) - (*(int*)b) );
-}
+#include "utilities.h"
 
 int main()
 {
@@ -140,8 +126,8 @@ int mergeTest()
   }
 
   // Sort them for the merge to work.
-  qsort( a , SIZE , sizeof(int) , compare );
-  qsort( b , SIZE , sizeof(int) , compare );
+  qsort( a , SIZE , sizeof(int) , ascending );
+  qsort( b , SIZE , sizeof(int) , ascending );
 
   // Call the function that performs the correct merge.
   flag = iterativeHighMerge(merged , a , b , SIZE );

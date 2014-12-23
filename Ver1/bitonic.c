@@ -2,7 +2,7 @@
 #include "mpi.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <sys/time.h>
 
 void print_all_arrays(int *array, int N, int processID, int numTasks)
 {
@@ -80,8 +80,7 @@ int main(int argc , char** argv)
     /*Calculate the total number of elements.
      * and create the dataset */
     N = 1 << q ;
-
-    printf("\n Process %d has started generating the dataset! \n", processID);
+ 
     array = (int *)malloc( N * sizeof(int) );
 
     if ( array == NULL ) {
@@ -95,7 +94,26 @@ int main(int argc , char** argv)
     for ( i = 0 ; i < N ; i++ ) {
         array[i] = rand() % N ;
     }
+    /* Wait for all the processes to create their data set. */
+    MPI_Barrier(MPI_COMM_WORLD);
+    
+    if (processID == MASTER )
+    {
+      data = (int *) malloc( N * numTasks * sizeof(int) ) ;
+      if ( data == NULL )
+      {
+        printf("Could not allocate memory for the array " 
+            "containing all the unsorted elements \n");
+        MPI_Abort( MPI_COMM_WORLD , MALLOC_ERROR );
+        exit(MALLOC_ERROR);
+      }
+    }
 
+    MPI_Gather(array, N , MPI_INT , data , N , MPI_INT , MASTER ,
+        MPI_COMM_WORLD);
+
+    /* Synchronise all the processes */
+    MPI_Barrier(MPI_COMM_WORLD); 
     /* Get the starting time of the sorting Process */
     if (processID == MASTER )
       startTime = MPI_Wtime();
@@ -181,8 +199,23 @@ int main(int argc , char** argv)
     #endif
     
     if ( processID == MASTER ) 
+    {
       printf("\n  Total time of Parallel Bitonic Sort = %f \n", endTime -
           startTime );
+      struct timeval startQtime ;
+      struct timeval endQtime;
+
+      #ifdef COMPARE 
+      gettimeofday (&startQtime, NULL);      
+      qsort( data , N * numTasks , sizeof(int) , ascendingOrder );
+      gettimeofday (&endQtime, NULL);
+      double qsort_time = (double)((endQtime.tv_usec - startQtime.tv_usec)
+            /1.0e6 + endQtime.tv_sec - startQtime.tv_sec);
+
+      printf("Serial Quicksort Time = %f \n" , qsort_time ) ;
+      #endif
+    }
+   
 
     free(array);
     MPI_Finalize();

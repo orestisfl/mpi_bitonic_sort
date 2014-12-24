@@ -192,13 +192,15 @@ int main(int argc , char** argv)
     free(array);
     MPI_Finalize();
 
+
+#ifdef COMPARE
     if ( processID == MASTER ) {
         printf("\n  Total time of Parallel Bitonic Sort = %f \n", endTime -
                startTime );
         struct timeval startQtime ;
         struct timeval endQtime;
 
-#ifdef COMPARE
+
         gettimeofday (&startQtime, NULL);
         qsort( qsort_data , N * numTasks , sizeof(int) , ascendingOrder );
         gettimeofday (&endQtime, NULL);
@@ -206,8 +208,7 @@ int main(int argc , char** argv)
                                      / 1.0e6 + endQtime.tv_sec - startQtime.tv_sec);
 
         printf("Serial Quicksort Time = %f \n" , qsort_time ) ;
-
-#ifdef TEST
+      #ifdef TEST
 
         int fail = 0;
         for (i = 0; i < N * numTasks; ++i) {
@@ -218,14 +219,19 @@ int main(int argc , char** argv)
             }
         }
         if (!fail) printf("qsort vs bsort PASSED\n");
+        free(final);
+        free( qsort_data );
+
 #endif
+ 
     }
-    free(final);
+    
+
 #endif
 
     
 
     return 0;
-
 }
+
 

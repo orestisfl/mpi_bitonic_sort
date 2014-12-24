@@ -2,6 +2,7 @@
 #include "mpi.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <sys/time.h>
 
 void print_all_arrays(int *array, int N, int processID, int numTasks)

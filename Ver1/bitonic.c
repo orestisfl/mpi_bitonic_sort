@@ -44,8 +44,8 @@ int main(int argc , char** argv)
         // If not print a warning message with the correct way to use
         // the program and terminate the execution.
         printf("Invalid command line argument option! \n");
-        printf("Usage : %s p q where p is the number of MPI processes to "
-               "be spawned and q the number of elements in each process. \n ",
+        printf("Usage : %s q be spawned and q the number of elements"
+            " in each process. \n ",
                argv[0] );
         exit(ARG_ERROR);
     }
@@ -63,18 +63,7 @@ int main(int argc , char** argv)
     // Parse the command line arguments.
 
 
-    q = atoi( argv[1]);
-
-    // The master process checks that the correct number of processes
-    // has started working.
-    if (processID == 0 && numTasks != ( 1 << p) ) {
-        printf("The number of tasks is not equal to the one passed to "
-               "the master process and thus the sorting procedure will stop! \n");
-
-        // Terminate the MPI processes.
-        MPI_Abort(MPI_COMM_WORLD, NTHREADS_ERROR);
-        exit(NTHREADS_ERROR);
-    } 
+    q = atoi( argv[1]); 
 
     /*Calculate the total number of elements.
      * and create the dataset */

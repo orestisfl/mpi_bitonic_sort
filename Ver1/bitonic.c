@@ -30,7 +30,7 @@ int main(int argc , char** argv)
     // The total number of tasks.
     int numTasks;
     // Loop Indices.
-    int i, j ;
+    int i;
     /*
      * p : 2^p is the total number of process to be used.
      * q : 2^p is the total number of elements of every process.
@@ -183,7 +183,7 @@ int main(int argc , char** argv)
     if (processID == MASTER && final != NULL ) {
 
         // Call the test routines to see if the procedure was successful.
-        int pass = ascendingSort( final , final_size ) ;
+        ascendingSort( final , final_size ) ;
 
         
     }

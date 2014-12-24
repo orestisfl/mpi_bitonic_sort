@@ -14,7 +14,7 @@ void* merge_low(int *a, int *b, size_t N)
     /* merging the two sorted arrays
     * we have 2N elements and we need N,
     * so there is no way to have leftovers*/
-    for (int i = 0; i < N; ++i) {
+    for (size_t i = 0; i < N; ++i) {
         if (a[j] < b[k]) result[i] = a[j++];
         else result[i] = b[k++];
     }
@@ -65,7 +65,7 @@ void merge_2N(int *a, int *b, size_t N, int dir)
 
     int ascending = dir == 1;
     int start = (ascending) ? 0 : N - 1;
-    int end = (ascending) ? N : -1;
+    int end = (ascending) ? (int)N : -1;
     int behind_start = (ascending) ? end - 1 : 0;
 
     int j = start;

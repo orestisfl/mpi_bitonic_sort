@@ -20,13 +20,15 @@ echo This job has allocated $NPROCS nodes
 
 q={2}
 echo Q is $q
+echo nodes is {0}
+echo ppn is {1}
 export I2G_MPI_TYPE=mpich2
 export I2G_MPI_APPLICATION=bitonic.out
 export I2G_MPI_APPLICATION_ARGS=$q
 $I2G_MPI_START'''
 
 nodes = [1, 2, 4]
-cores = [1,2,4,8]
+cores = [1,2,4,8,16, 32, 64]
 Q = range(16, 21)
 src = r'/tmp/run_test'
 os.chdir(src)
@@ -38,5 +40,5 @@ for n_nodes in nodes:
             filename = "script{0}{1}{2}.sh".format(n_nodes, n_cores, q)
             with open(filename, "w") as f:
                 f.write(script)
-            #~ call("qsub " + filename, shell=True)
-            print "qsub " + filename
+            call("qsub " + filename, shell=True)
+            #~ print "qsub " + filename

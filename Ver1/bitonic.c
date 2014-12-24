@@ -36,9 +36,6 @@ int main(int argc , char** argv)
      * q : 2^p is the total number of elements of every process.
     */
     int p , q ;
-    
-    // Pointer to an array containing the initial data.
-    int *data;
 
     double startTime;
     double endTime ;
@@ -81,7 +78,7 @@ int main(int argc , char** argv)
     /*Calculate the total number of elements.
      * and create the dataset */
     N = 1 << q ;
- 
+
     array = (int *)malloc( N * sizeof(int) );
 
     if ( array == NULL ) {
@@ -95,40 +92,38 @@ int main(int argc , char** argv)
     for ( i = 0 ; i < N ; i++ ) {
         array[i] = rand() % N ;
     }
+
+#ifdef COMPARE
     /* Wait for all the processes to create their data set. */
     MPI_Barrier(MPI_COMM_WORLD);
-    
-    if (processID == MASTER )
-    {
-      data = (int *) malloc( N * numTasks * sizeof(int) ) ;
-      if ( data == NULL )
-      {
-        printf("Could not allocate memory for the array " 
-            "containing all the unsorted elements \n");
-        MPI_Abort( MPI_COMM_WORLD , MALLOC_ERROR );
-        exit(MALLOC_ERROR);
-      }
+    // Pointer to an array containing the initial data.
+    int *qsort_data;
+    if (processID == MASTER ) {
+        qsort_data = (int *) malloc( N * numTasks * sizeof(int) ) ;
+        if ( qsort_data == NULL ) {
+            printf("Could not allocate memory for the array "
+                   "containing all the unsorted elements \n");
+            MPI_Abort( MPI_COMM_WORLD , MALLOC_ERROR );
+            exit(MALLOC_ERROR);
+        }
     }
 
-    MPI_Gather(array, N , MPI_INT , data , N , MPI_INT , MASTER ,
-        MPI_COMM_WORLD);
+    MPI_Gather(array, N , MPI_INT , qsort_data , N , MPI_INT , MASTER ,
+               MPI_COMM_WORLD);
 
-    /* Synchronise all the processes */
-    MPI_Barrier(MPI_COMM_WORLD); 
+
     /* Get the starting time of the sorting Process */
     if (processID == MASTER )
-      startTime = MPI_Wtime();
-    
-    /* Sort the local data in ascending order */
-    
-    qsort( array , N , sizeof(int) , ascendingOrder );
+        startTime = MPI_Wtime();
+#endif
 
-    // Wait for all the tasks to generate the data set.
+
+
+    /* Sort the local data in ascending order */
     MPI_Barrier(MPI_COMM_WORLD);
-    
-   
-    // Communicate with all corresponding processes.
-   
+    qsort( array , N , sizeof(int) , ascendingOrder );
+    MPI_Barrier(MPI_COMM_WORLD);
+
     for (int i = 0 ; i < p ; i++) {
         for (int  j = i ; j >= 0 ; j-- ) {
             /* The next process we will be paired with is the one
@@ -143,83 +138,94 @@ int main(int argc , char** argv)
              * elements , if not the larger ones.
             */
             if ( (( processID >> (i + 1)) & 1  ) == (  (processID >> j) & 1) )
-              compare(&array, N, partner, ASCENDING);
-            else 
-              compare(&array, N, partner, DESCENDING);
+                compare(&array, N, partner, ASCENDING);
+            else
+                compare(&array, N, partner, DESCENDING);
 
-        }      
+        }
     } // End of for loop for communications.
 
     // Wait for all the processes to finish the exchanges.
     MPI_Barrier(MPI_COMM_WORLD);
-    
 
-    if (processID == MASTER ) 
-    {
-      endTime = MPI_Wtime(); 
+
+    if (processID == MASTER ) {
+        endTime = MPI_Wtime();
     }
     // If the test macro is enabled print that the sorting finished
     // successfully and perform verification tests.
-    #ifdef TEST
+#ifdef TEST
 
     // Size of the receiving buffer used for testing.
     int final_size = N * numTasks;
-  
+
     // Pointer to the array of the received data from every process.
     int *final;
     // Only the master process needs to allocate memory.
-    if (processID == MASTER)
-    {
-      final = malloc(final_size * sizeof(int));
+    if (processID == MASTER) {
+        final = malloc(final_size * sizeof(int));
 
-      if ( final == NULL )
-      {
-        printf("Could not allocate memory for the buffer so as to " 
-            "receive all the data. The test will not be performed! \n ");
-      }
+        if ( final == NULL ) {
+            printf("Could not allocate memory for the buffer so as to "
+                   "receive all the data. The test will not be performed! \n ");
+        }
     }
-    
+
     /* If we are the master process gather all the data :
-     * array : local array of every process 
+     * array : local array of every process
      * N : number of elements each process has
      * final : receiving buffer
      * N : Number of elements the receiving process will get from every
      *     other process in the sorting network.
     */
 
-    MPI_Gather(array, N,MPI_INT , final, N, MPI_INT, MASTER , MPI_COMM_WORLD);
+    MPI_Gather(array, N, MPI_INT , final, N, MPI_INT, MASTER , MPI_COMM_WORLD);
 
     if (processID == MASTER && final != NULL ) {
-    
-      // Call the test routines to see if the procedure was successful.
-      int pass = ascendingSort( final , final_size ) ;
 
-      free(final);
+        // Call the test routines to see if the procedure was successful.
+        int pass = ascendingSort( final , final_size ) ;
+
+        
     }
 
-    #endif
-    
-    if ( processID == MASTER ) 
-    {
-      printf("\n  Total time of Parallel Bitonic Sort = %f \n", endTime -
-          startTime );
-      struct timeval startQtime ;
-      struct timeval endQtime;
-
-      #ifdef COMPARE 
-      gettimeofday (&startQtime, NULL);      
-      qsort( data , N * numTasks , sizeof(int) , ascendingOrder );
-      gettimeofday (&endQtime, NULL);
-      double qsort_time = (double)((endQtime.tv_usec - startQtime.tv_usec)
-            /1.0e6 + endQtime.tv_sec - startQtime.tv_sec);
-
-      printf("Serial Quicksort Time = %f \n" , qsort_time ) ;
-      #endif
-    }
-   
-
+#endif
     free(array);
     MPI_Finalize();
+
+    if ( processID == MASTER ) {
+        printf("\n  Total time of Parallel Bitonic Sort = %f \n", endTime -
+               startTime );
+        struct timeval startQtime ;
+        struct timeval endQtime;
+
+#ifdef COMPARE
+        gettimeofday (&startQtime, NULL);
+        qsort( qsort_data , N * numTasks , sizeof(int) , ascendingOrder );
+        gettimeofday (&endQtime, NULL);
+        double qsort_time = (double)((endQtime.tv_usec - startQtime.tv_usec)
+                                     / 1.0e6 + endQtime.tv_sec - startQtime.tv_sec);
+
+        printf("Serial Quicksort Time = %f \n" , qsort_time ) ;
+
+#ifdef TEST
+
+        int fail = 0;
+        for (i = 0; i < N * numTasks; ++i) {
+            if (final[i] != qsort_data[i]) {
+                printf("qsort vs bsort FAILED at %d\n", i);
+                fail = 1;
+                break;
+            }
+        }
+        if (!fail) printf("qsort vs bsort PASSED\n");
+#endif
+    }
+    free(final);
+#endif
+
+    
+
     return 0;
 
 }

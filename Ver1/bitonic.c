@@ -120,7 +120,6 @@ int main(int argc , char** argv)
 
 
     /* Sort the local data in ascending order */
-    MPI_Barrier(MPI_COMM_WORLD);
     qsort( array , N , sizeof(int) , ascendingOrder );
     MPI_Barrier(MPI_COMM_WORLD);
 

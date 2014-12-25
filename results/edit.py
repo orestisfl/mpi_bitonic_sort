@@ -1,6 +1,7 @@
 import os
 import re
 from math import log
+from numpy import float64
 
 src = r'results'
 os.chdir(src)
@@ -38,37 +39,31 @@ handling = {
     "comm_size": int,
     "asc_comp": lambda x: x.lower()=="pass",
     "qsort_comp": lambda x: x.lower()=="pass",
-    "btime": float,
-    "qtime": float,
+    "btime": float64,
+    "qtime": float64,
 }
 
 for file_name in file_names:
-    #~ results.append({})
-    #~ results.append({"find_fails":[]})
     with open(file_name) as file:
         f_str = file.read()
         for name, pattern in patterns.items():
-            #~ search_results = re.search(pattern, f_str, flags=re.IGNORECASE)
-            #~ if search_results:
-                #~ results[-1][name] = search_results.groups()[0]
-            #~ else:
-                #~ results[-1]["find_fails"].append(name)
             res = re.search(pattern, f_str, flags=re.IGNORECASE).groups()[0]
             value = handling[name](res)
             results[name].append(value)
 
 if not all(results["asc_comp"]):
-    print("WARNING: fail detected at asc_comp")
+    print("WARNING: fail detected at asc_comp! check it out")
 del results["asc_comp"]
     
 if not all(results["qsort_comp"]):
-    print("WARNING: fail detected at qsort_comp")
+    print("WARNING: fail detected at qsort_comp! check it out")
 del results["qsort_comp"]
 
-print(results)
-fmt = lambda x : "%02d" % x + str(x%1)[1:4]
+#~ print(results)
+
 
 for bsort, qsort in zip(results["btime"], results["qtime"]):
-    end = (qsort<bsort) * " <----WARNING: qsort faster" + "\n"
-    print(fmt(bsort), fmt(qsort), fmt(bsort/qsort*100) + "%", end=end)
+    end = (qsort<bsort) * " <----qsort faster" + "\n"
+    diff = (bsort-qsort)/qsort*100
+    print(("%0.2f"%bsort).zfill(5), ("%0.2f"%qsort).zfill(5), ("%0.2f"%diff).zfill(5) + "%", end=end)
 

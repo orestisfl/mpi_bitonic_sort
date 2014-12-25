@@ -31,15 +31,17 @@ $I2G_MPI_START'''
 nodes = [1, 2, 4]
 cores = [1,2,4,8,16, 32, 64]
 Q = range(16, 21)
-src = r'/mnt/scratchdir/home/orestisf/run_tests/'
+#~ src = r'/mnt/scratchdir/home/orestisf/run_tests/'
+src = r'/tmp/run_test/'
 os.chdir(src)
 
 for n_nodes in nodes:
     for n_cores in cores:
         for q in Q:
-            if q + log(n_nodes * n_cores, 2) < 25:
+            final_size = int(q + log(n_nodes * n_cores, 2))
+            if final_size < 25:
                 time = 1
-            elif q + log(n_nodes * n_cores, 2) < 26:
+            elif final_size < 26:
                 time = 2
             else:
                 time = 5
@@ -47,5 +49,5 @@ for n_nodes in nodes:
             filename = "script{0}{1}{2}.sh".format(n_nodes, n_cores, q)
             with open(filename, "w") as f:
                 f.write(script)
-            call("qsub " + filename, shell=True)
-            #~ print "qsub " + filename
+            #~ call("qsub " + filename, shell=True)
+            print "qsub " + filename

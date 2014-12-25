@@ -28,7 +28,7 @@ void parallelImpBitonicSort(void);
 
 int ascendingSort (const void * a, const void * b)
 {
-    return ( *(int*)a - *(int*)b );
+    return ( *(int*)a - * (int*)b );
 }
 
 /** the main program **/
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     init();
 
     gettimeofday (&startwtime, NULL);
-    qsort( a , N , sizeof(int) , ascendingSort ); 
+    qsort( a , N , sizeof(int) , ascendingSort );
     gettimeofday (&endwtime, NULL);
 
     seq_time = (double)((endwtime.tv_usec - startwtime.tv_usec) / 1.0e6
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
     test();
 
-    // Imperative Bitonic Sort 
+    // Imperative Bitonic Sort
     init();
 
     gettimeofday (&startwtime, NULL);
@@ -74,13 +74,14 @@ int main(int argc, char **argv)
     init();
 
     gettimeofday (&startwtime, NULL);
+    printf("NTHREADS is %d\n", NTHREADS);
     parallelImpBitonicSort();
     gettimeofday (&endwtime, NULL);
 
     seq_time = (double)((endwtime.tv_usec - startwtime.tv_usec) / 1.0e6
                         + endwtime.tv_sec - startwtime.tv_sec);
 
-    printf("\nParallel Imperative wall clock time = %f\n", seq_time);
+    printf("\nParallel(OMP) Imperative wall clock time = %f\n", seq_time);
 
     test();
 
@@ -97,7 +98,7 @@ int main(int argc, char **argv)
 
     test();
 
-    // print();
+    return 0;
 }
 
 /** -------------- SUB-PROCEDURES  ----------------- **/
@@ -222,7 +223,7 @@ void impBitonicSort()
     int ij;
 
     for (k = 2; k <= N; k = 2 * k) {
-        for (j = k >> 1; j > 0; j = j >> 1) {       
+        for (j = k >> 1; j > 0; j = j >> 1) {
             for (i = 0; i < N; i++) {
                 ij = i ^ j;
                 if (ij > i) {
@@ -248,7 +249,7 @@ void parallelImpBitonicSort()
 
     for (k = 2; k <= N; k = 2 * k) {
         for (j = k >> 1; j > 0; j = j >> 1) {
-            #pragma omp parallel for private(ij)
+            #pragma omp parallel for private(ij) num_threads(NTHREADS)
             for (i = 0; i < N; i++) {
                 ij = i ^ j;
                 if (ij > i) {

@@ -1,0 +1,18 @@
+Master process running on wn017.grid.auth.gr
+Directory is /mnt/scratchdir/home/orestisf/omp_tests
+PBS has allocated the following nodes:
+
+This job has allocated 32 NPROCS
+Q is 26
+
+ Quicksort  wall clock time = 15.128052
+ TEST PASSed
+
+Imperative wall clock time = 62.570812
+ TEST PASSed
+NTHREADS is 32
+
+Parallel(OMP) Imperative wall clock time = 18.191064
+ TEST PASSed
+Recursive wall clock time = 53.854557
+ TEST PASSed

@@ -1,0 +1,14 @@
+Master process running on wn018.grid.auth.gr
+Directory is /mnt/scratchdir/home/orestisf/run_tests
+PBS has allocated the following nodes:
+
+This job has allocated 32 nodes
+Q is 19
+nodes is 4
+ppn is 8
+MPI says that comm_size is 32
+Ascending sort TEST PASSed
+
+  Total time of Parallel Bitonic Sort = 1.214963 
+Serial Quicksort Time = 4.718553 
+qsort vs bsort PASSED

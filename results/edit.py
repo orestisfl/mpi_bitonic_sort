@@ -59,24 +59,16 @@ for idx, x in enumerate(results):
     del x["asc_comp"], x["qsort_comp"], x["comm_size"]
     
 
-#~ import json
-#~ with open("temp.json", "w") as f:
-    #~ json.dump(results,f)
-
-#~ print(results)
-
-
-#~ for x in results:
-    #~ end = (x["qsort"]<x["bsort"]) * " <----qsort faster" + "\n"
-    #~ diff = (x["bsort"]-x["qsort"])/x["qsort"]*100
-    #~ print(x["Q"],":", ("%0.2f"%x["bsort"]).zfill(5), ("%0.2f"%x["qsort"]).zfill(5), ("%0.2f"%diff).zfill(5) + "%", end=end)
+for x in results:
+    end = (x["qsort"]<x["bsort"]) * " <----qsort faster" + "\n"
+    diff = (x["bsort"]-x["qsort"])/x["qsort"]*100
+    print(x["Q"],":", ("%0.2f"%x["bsort"]).zfill(5), ("%0.2f"%x["qsort"]).zfill(5), ("%0.2f"%diff).zfill(5) + "%", end=end)
 
 
 per_node = {}
 results.sort(key=lambda x: x["nodes"])
 for nodes, value in groupby(results, lambda x: x["nodes"]):
     per_node[nodes] = list(value)
-#~ print(per_node)
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -123,16 +115,15 @@ for ax, nodes, value in zip(axes, per_node.keys(), per_node.values()):
     [legobj.set_linewidth(5.0) for legobj in ax.legend(handles, labels, loc='upper right').legendHandles]
     
 
+fig.set_size_inches(20, 20)
+fig.savefig('../plot_all.png',dpi=100)
 
-#~ fig.set_size_inches(20, 20)
-#~ fig.savefig('../plot_all.png',dpi=100)
-#~ 
-#~ extent = axes[0].get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-#~ fig.savefig('../plot0.png', bbox_inches=extent.expanded(1.1, 1.2))
-#~ extent = axes[1].get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-#~ fig.savefig('../plot1.png', bbox_inches=extent.expanded(1.1, 1.2))
-#~ extent = axes[2].get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-#~ fig.savefig('../plot2.png', bbox_inches=extent.expanded(1.1, 1.2))
+extent = axes[0].get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+fig.savefig('../plot0.png', bbox_inches=extent.expanded(1.1, 1.2))
+extent = axes[1].get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+fig.savefig('../plot1.png', bbox_inches=extent.expanded(1.1, 1.2))
+extent = axes[2].get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+fig.savefig('../plot2.png', bbox_inches=extent.expanded(1.1, 1.2))
 
 del np,plt,mpl,fig
 import numpy as np

@@ -30,7 +30,7 @@ int main(int argc , char** argv)
     // The total number of tasks.
     int numTasks;
     // Loop Indices.
-    int i;
+    int i, j ;
     /*
      * p : 2^p is the total number of process to be used.
      * q : 2^p is the total number of elements of every process.
@@ -40,12 +40,12 @@ int main(int argc , char** argv)
     double startTime;
     double endTime ;
     // Check if enough arguments were passed to each process.
-    if ( argc < 3) {
+    if ( argc < 2) {
         // If not print a warning message with the correct way to use
         // the program and terminate the execution.
         printf("Invalid command line argument option! \n");
-        printf("Usage : %s p q where p is the number of MPI processes to "
-               "be spawned and q the number of elements in each process. \n ",
+        printf("Usage : %s q be spawned and q the number of elements"
+            " in each process. \n ",
                argv[0] );
         exit(ARG_ERROR);
     }
@@ -61,19 +61,9 @@ int main(int argc , char** argv)
     MPI_Comm_rank( MPI_COMM_WORLD , &processID);
 
     // Parse the command line arguments.
-    p = atoi( argv[1]);
-    q = atoi( argv[2]);
 
-    // The master process checks that the correct number of processes
-    // has started working.
-    if (processID == 0 && numTasks != ( 1 << p) ) {
-        printf("The number of tasks is not equal to the one passed to "
-               "the master process and thus the sorting procedure will stop! \n");
 
-        // Terminate the MPI processes.
-        MPI_Abort(MPI_COMM_WORLD, NTHREADS_ERROR);
-        exit(NTHREADS_ERROR);
-    }
+    q = atoi( argv[1]); 
 
     /*Calculate the total number of elements.
      * and create the dataset */
@@ -120,10 +110,11 @@ int main(int argc , char** argv)
 
 
     /* Sort the local data in ascending order */
+    MPI_Barrier(MPI_COMM_WORLD);
     qsort( array , N , sizeof(int) , ascendingOrder );
     MPI_Barrier(MPI_COMM_WORLD);
 
-    for (int i = 0 ; i < p ; i++) {
+    for (int i = 0 ; i < log2(numTasks) ; i++) {
         for (int  j = i ; j >= 0 ; j-- ) {
             /* The next process we will be paired with is the one
              * whose j-th bit is the complement of ours. So we toggle
@@ -183,7 +174,7 @@ int main(int argc , char** argv)
     if (processID == MASTER && final != NULL ) {
 
         // Call the test routines to see if the procedure was successful.
-        ascendingSort( final , final_size ) ;
+        int pass = ascendingSort( final , final_size ) ;
 
         
     }
@@ -192,14 +183,13 @@ int main(int argc , char** argv)
     free(array);
     MPI_Finalize();
 
-
 #ifdef COMPARE
+
     if ( processID == MASTER ) {
         printf("\n  Total time of Parallel Bitonic Sort = %f \n", endTime -
                startTime );
         struct timeval startQtime ;
         struct timeval endQtime;
-
 
         gettimeofday (&startQtime, NULL);
         qsort( qsort_data , N * numTasks , sizeof(int) , ascendingOrder );
@@ -208,7 +198,8 @@ int main(int argc , char** argv)
                                      / 1.0e6 + endQtime.tv_sec - startQtime.tv_sec);
 
         printf("Serial Quicksort Time = %f \n" , qsort_time ) ;
-      #ifdef TEST
+
+#ifdef TEST
 
         int fail = 0;
         for (i = 0; i < N * numTasks; ++i) {
@@ -219,19 +210,16 @@ int main(int argc , char** argv)
             }
         }
         if (!fail) printf("qsort vs bsort PASSED\n");
-        free(final);
-        free( qsort_data );
-
+	free(final);
+	free( qsort_data);
 #endif
- 
     }
     
-
 #endif
 
     
 
     return 0;
-}
 
+}
 

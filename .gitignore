@@ -1,0 +1,22 @@
+# Object files
+*.o
+*.obj
+
+*.swn
+*.swp
+*.swo
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+
+
+# Executables
+*.exe
+*.out
+*.hex
+
+*.fuse_hidden*

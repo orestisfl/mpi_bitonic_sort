@@ -25,8 +25,7 @@ echo Q is $q
 '''
 
 Q = range(16, 29)
-#~ src = r'/mnt/scratchdir/home/orestisf/omp_tests/'
-src = r'/tmp/run_test/'
+src = r'/mnt/scratchdir/home/orestisf/omp_tests/'
 os.chdir(src)
 
 for q in Q:
@@ -41,5 +40,5 @@ for q in Q:
     filename = "script{0}.sh".format(q)
     with open(filename, "w") as f:
         f.write(script)
-    #~ call("qsub " + filename, shell=True)
-    print "qsub " + filename
+    call("qsub " + filename, shell=True)
+    #~ print "qsub " + filename

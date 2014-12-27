@@ -31,8 +31,7 @@ $I2G_MPI_START'''
 nodes = [1, 2, 4]
 cores = [1,2,4,8,16, 32, 64]
 Q = range(16, 21)
-#~ src = r'/mnt/scratchdir/home/orestisf/run_tests/'
-src = r'/tmp/run_test/'
+src = r'/mnt/scratchdir/home/orestisf/run_tests/'
 os.chdir(src)
 
 for n_nodes in nodes:

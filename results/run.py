@@ -2,6 +2,7 @@ import os
 from subprocess import call
 from math import log
 
+#from: http://it.auth.gr/en/node/1548
 script_src=r'''#!/bin/bash
 #PBS -q auth
 #PBS -N bitonic

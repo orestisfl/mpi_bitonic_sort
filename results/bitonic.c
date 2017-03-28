@@ -1,86 +1,73 @@
-#include "utilities.h"
 #include "mpi.h"
+#include "utilities.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <sys/time.h>
+#include <time.h>
 
-void print_all_arrays(int *array, int N, int processID, int numTasks)
-{
+void print_all_arrays(int *array, int N, int processID, int numTasks) {
     int runs = 0;
     while (runs < numTasks) {
         if (processID == runs) {
-            printf ("Array printed by rank: %d\n", processID);
+            printf("Array printed by rank: %d\n", processID);
             print_array(array, N);
-            fflush (stdout);
+            fflush(stdout);
         }
-        runs ++;
-        MPI_Barrier (MPI_COMM_WORLD);
+        runs++;
+        MPI_Barrier(MPI_COMM_WORLD);
     }
 }
 
-int main(int argc , char** argv)
-{
-    // ID of the process.
-    int processID;
-    // The local array with the elements of every process.
-    int *array;
-    // The number of elements in the local data array.
-    int N;
-    // The total number of tasks.
-    int numTasks;
-    // Loop Indices.
-    int i, j ;
-    /*
-     * p : 2^p is the total number of process to be used.
-     * q : 2^p is the total number of elements of every process.
-    */
-    int p , q ;
+int main(int argc, char **argv) {
+    int processID;  // ID of the process.
+    int *array;     // The local array with the elements of every process.
+    int N;          // The number of elements in the local data array.
+    int numTasks;   // The total number of tasks.
+    int p;          // 2^p is the total number of process to be used.
+    int q;          // 2^q is the total number of elements of every process.
 
     double startTime;
-    double endTime ;
+    double endTime;
     // Check if enough arguments were passed to each process.
-    if ( argc < 2) {
+    if (argc < 2) {
         // If not print a warning message with the correct way to use
         // the program and terminate the execution.
         printf("Invalid command line argument option! \n");
         printf("Usage : %s q be spawned and q the number of elements"
-            " in each process. \n ",
-               argv[0] );
+               " in each process. \n ",
+               argv[0]);
         exit(ARG_ERROR);
     }
 
     // Initialize the MPI processes and pass the command line
     // arguments to every one of them.
-    MPI_Init( &argc , &argv);
+    MPI_Init(&argc, &argv);
 
     // Get the number of tasks running
-    MPI_Comm_size( MPI_COMM_WORLD , &numTasks);
+    MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
 
     // Get the id of the process from the MPI daemon.
-    MPI_Comm_rank( MPI_COMM_WORLD , &processID);
+    MPI_Comm_rank(MPI_COMM_WORLD, &processID);
 
     // Parse the command line arguments.
-
-
-    q = atoi( argv[1]); 
+    q = atoi(argv[1]);
 
     /*Calculate the total number of elements.
      * and create the dataset */
-    N = 1 << q ;
+    N = 1 << q;
+    array = (int *)malloc(N * sizeof(int));
 
-    array = (int *)malloc( N * sizeof(int) );
-
-    if ( array == NULL ) {
+    if (array == NULL) {
         printf("Process %d failed to allocate the memory required for the"
-               " data array \n", processID);
+               " data array \n",
+               processID);
         MPI_Abort(MPI_COMM_WORLD, MALLOC_ERROR);
         exit(MALLOC_ERROR);
     }
 
     srand(time(NULL) * (processID + 1));
-    for ( i = 0 ; i < N ; i++ ) {
-        array[i] = rand() % N ;
+    for (int i = 0; i < N; i++) {
+        array[i] = rand() % N;
     }
 
 #ifdef COMPARE
@@ -88,34 +75,31 @@ int main(int argc , char** argv)
     MPI_Barrier(MPI_COMM_WORLD);
     // Pointer to an array containing the initial data.
     int *qsort_data;
-    if (processID == MASTER ) {
-        qsort_data = (int *) malloc( N * numTasks * sizeof(int) ) ;
-        if ( qsort_data == NULL ) {
+    if (processID == MASTER) {
+        qsort_data = (int *)malloc(N * numTasks * sizeof(int));
+        if (qsort_data == NULL) {
             printf("Could not allocate memory for the array "
                    "containing all the unsorted elements \n");
-            MPI_Abort( MPI_COMM_WORLD , MALLOC_ERROR );
+            MPI_Abort(MPI_COMM_WORLD, MALLOC_ERROR);
             exit(MALLOC_ERROR);
         }
     }
 
-    MPI_Gather(array, N , MPI_INT , qsort_data , N , MPI_INT , MASTER ,
-               MPI_COMM_WORLD);
-
+    MPI_Gather(array, N, MPI_INT, qsort_data, N, MPI_INT, MASTER, MPI_COMM_WORLD);
 
     /* Get the starting time of the sorting Process */
-    if (processID == MASTER )
+    if (processID == MASTER) {
         startTime = MPI_Wtime();
+    }
 #endif
-
-
 
     /* Sort the local data in ascending order */
     MPI_Barrier(MPI_COMM_WORLD);
-    qsort( array , N , sizeof(int) , ascendingOrder );
+    qsort(array, N, sizeof(int), ascendingOrder);
     MPI_Barrier(MPI_COMM_WORLD);
 
-    for (int i = 0 ; i < log2(numTasks) ; i++) {
-        for (int  j = i ; j >= 0 ; j-- ) {
+    for (int i = 0; i < log2(numTasks); i++) {
+        for (int j = i; j >= 0; j--) {
             /* The next process we will be paired with is the one
              * whose j-th bit is the complement of ours. So we toggle
              * our j-th bit using the XOR operation to find our partner
@@ -127,35 +111,34 @@ int main(int argc , char** argv)
              * to the #j bit. If they are equal then we keep the small
              * elements , if not the larger ones.
             */
-            if ( (( processID >> (i + 1)) & 1  ) == (  (processID >> j) & 1) )
+            if (((processID >> (i + 1)) & 1) == ((processID >> j) & 1)) {
                 compare(&array, N, partner, ASCENDING);
-            else
+            } else {
                 compare(&array, N, partner, DESCENDING);
-
+            }
         }
-    } // End of for loop for communications.
+    }  // End of for loop for communications.
 
     // Wait for all the processes to finish the exchanges.
     MPI_Barrier(MPI_COMM_WORLD);
 
-
-    if (processID == MASTER ) {
+    if (processID == MASTER) {
         endTime = MPI_Wtime();
     }
-    // If the test macro is enabled print that the sorting finished
-    // successfully and perform verification tests.
+// If the test macro is enabled print that the sorting finished
+// successfully and perform verification tests.
 #ifdef TEST
 
     // Size of the receiving buffer used for testing.
     int final_size = N * numTasks;
 
     // Pointer to the array of the received data from every process.
-    int *final;
+    int * final;
     // Only the master process needs to allocate memory.
     if (processID == MASTER) {
         final = malloc(final_size * sizeof(int));
 
-        if ( final == NULL ) {
+        if (final == NULL) {
             printf("Could not allocate memory for the buffer so as to "
                    "receive all the data. The test will not be performed! \n ");
         }
@@ -169,14 +152,11 @@ int main(int argc , char** argv)
      *     other process in the sorting network.
     */
 
-    MPI_Gather(array, N, MPI_INT , final, N, MPI_INT, MASTER , MPI_COMM_WORLD);
+    MPI_Gather(array, N, MPI_INT, final, N, MPI_INT, MASTER, MPI_COMM_WORLD);
 
-    if (processID == MASTER && final != NULL ) {
-
+    if (processID == MASTER && final != NULL) {
         // Call the test routines to see if the procedure was successful.
-        int pass = ascendingSort( final , final_size ) ;
-
-        
+        ascendingSort(final, final_size);
     }
 
 #endif
@@ -184,42 +164,36 @@ int main(int argc , char** argv)
     MPI_Finalize();
 
 #ifdef COMPARE
-
-    if ( processID == MASTER ) {
-        printf("\n  Total time of Parallel Bitonic Sort = %f \n", endTime -
-               startTime );
-        struct timeval startQtime ;
+    if (processID == MASTER) {
+        printf("\n  Total time of Parallel Bitonic Sort = %f \n", endTime - startTime);
+        struct timeval startQtime;
         struct timeval endQtime;
 
-        gettimeofday (&startQtime, NULL);
-        qsort( qsort_data , N * numTasks , sizeof(int) , ascendingOrder );
-        gettimeofday (&endQtime, NULL);
-        double qsort_time = (double)((endQtime.tv_usec - startQtime.tv_usec)
-                                     / 1.0e6 + endQtime.tv_sec - startQtime.tv_sec);
+        gettimeofday(&startQtime, NULL);
+        qsort(qsort_data, N * numTasks, sizeof(int), ascendingOrder);
+        gettimeofday(&endQtime, NULL);
+        double qsort_time = (double)((endQtime.tv_usec - startQtime.tv_usec) / 1.0e6 +
+                                     endQtime.tv_sec - startQtime.tv_sec);
 
-        printf("Serial Quicksort Time = %f \n" , qsort_time ) ;
+        printf("Serial Quicksort Time = %f \n", qsort_time);
 
 #ifdef TEST
 
         int fail = 0;
-        for (i = 0; i < N * numTasks; ++i) {
+        for (int i = 0; i < N * numTasks; ++i) {
             if (final[i] != qsort_data[i]) {
                 printf("qsort vs bsort FAILED at %d\n", i);
                 fail = 1;
                 break;
             }
         }
-        if (!fail) printf("qsort vs bsort PASSED\n");
-	free(final);
-	free( qsort_data);
+        if (!fail) {
+            printf("qsort vs bsort PASSED\n");
+        }
+        free(final);
+        free(qsort_data);
 #endif
     }
-    
 #endif
-
-    
-
     return 0;
-
 }
-

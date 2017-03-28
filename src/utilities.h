@@ -2,12 +2,7 @@
 #define UTILITIES_H
 #include <stdlib.h>
 
-enum {
-    ARG_ERROR = 3,
-    MALLOC_ERROR,
-    NTHREADS_ERROR
-} errors;
-
+enum { ARG_ERROR = 3, MALLOC_ERROR, NTHREADS_ERROR } errors;
 
 // Array size for test purposes.
 #define SIZE 100
@@ -26,12 +21,11 @@ void icantor(int z, int res[2]);
 void print_array(int *a, int N);
 void print_all_arrays(int *array, int N, int processID, int numTasks);
 
-int ascendingOrder( const void *a , const void *b);
+int ascendingOrder(const void *a, const void *b);
 
-int iterativeHighMerge(int *merged , int *a , int *b , int N );
-int iterativeLowMerge(int *merged , int *a , int *b , int N );
+int iterativeHighMerge(int *merged, int *a, int *b, int N);
+int iterativeLowMerge(int *merged, int *a, int *b, int N);
 int mergeTest();
-int comparisonTest( int * trueVal , int *valFound , int N );
-int ascendingSort(int* array , int N );
+int comparisonTest(int *trueVal, int *valFound, int N);
+int ascendingSort(int *array, int N);
 #endif
-
